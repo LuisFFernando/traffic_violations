@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Vehículo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 16px;
+            box-sizing: border-box;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Editar Vehículo</h1>
+    <form id="editVehicleForm">
+        <label for="brand">Marca:</label>
+        <input type="text" id="brand" name="brand" required>
+
+        <label for="model">Modelo:</label>
+        <input type="text" id="model" name="model" required>
+
+        <label for="color">Color:</label>
+        <input type="text" id="color" name="color" required>
+
+        <label for="placa_patente">Placa Patente:</label>
+        <input type="text" id="placa_patente" name="placa_patente" required>
+
+        <button type="submit">Guardar Cambios</button>
+    </form>
+
+    <script>
+        document.getElementById('editVehicleForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+            updateVehicle();
+        });
+
+        function updateVehicle() {
+            const userId = obtenerUserId();
+            const vehicleId = window.location.pathname.split('/').pop();
+
+            const updatedVehicle = {
+                brand: document.getElementById('brand').value,
+                model: document.getElementById('model').value,
+                color: document.getElementById('color').value,
+                placa_patente: document.getElementById('placa_patente').value,
+            };
+
+            fetch(`/api/v1/vehicle/${vehicleId}/user/${userId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(updatedVehicle),
+            })
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        console.log('Vehículo actualizado con éxito:', result.message);
+                    } else {
+                        console.error('Error al actualizar vehículo:', result.message);
+                    }
+                })
+                .catch(error => console.error('Error al enviar datos actualizados:', error));
+        }
+
+        function obtenerUserId() {
+            return '1';
+        }
+    </script>
+</body>
+
+</html>

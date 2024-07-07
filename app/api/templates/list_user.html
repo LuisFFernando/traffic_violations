@@ -1,0 +1,125 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Usuarios</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .action-link {
+            cursor: pointer;
+            color: blue;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Lista de Usuarios</h1>
+    <table id="userTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Email</th>
+                <th>Activo</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        async function loadUsers() {
+            try {
+                const response = await fetch('/api/v1/user');
+                const result = await response.json();
+
+                if (response.ok) {
+                    if (result.success && result.data) {
+                        const users = result.data;
+
+                        const userTableBody = document.querySelector('#userTable tbody');
+                        userTableBody.innerHTML = '';
+
+                        users.forEach(user => {
+                            const row = userTableBody.insertRow();
+                            row.innerHTML = `
+                               <td>${user.id}</td>
+                               <td>${user.name}</td>
+                               <td>${user.last_name}</td>
+                               <td>${user.email}</td>
+                               <td>${user.active ? 'Sí' : 'No'}</td>
+                               <td>
+                                   <a href="/api/v1/create_vehicle/${user.id}">Add Vehiculos</a>
+                                   | 
+                                   <a href="/api/v1/list_vehicle/${user.id}">Listar Vehículos</a>
+                                   | 
+                                   <a href="/api/v1/update_user/${user.id}">Editar Usuario</a>
+                                   |
+                                   <span class="action-link" onclick="deleteUser(${user.id})">Eliminar</span>
+
+                               </td>
+                           `;
+                        });
+                    } else {
+                        console.error('Error en la respuesta del servidor:', result.message);
+                    }
+                } else {
+                    console.error('Error en la respuesta del servidor:', response.status, response.statusText);
+                }
+            } catch (error) {
+                console.error('Error al cargar la lista de usuarios:', error);
+            }
+        }
+
+
+        async function deleteUser(userId) {
+            if (confirm('¿Estás seguro de que deseas eliminar este usuario?')) {
+                try {
+                    const response = await fetch(`/api/v1/user/${userId}`, {
+                        method: 'DELETE',
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok) {
+                        if (result.success) {
+                            console.log('Usuario eliminado con éxito:', result.message);
+                            loadOfficers(); // Recargar la lista de oficiales después de la eliminación
+                        } else {
+                            console.error('Error al eliminar usuario:', result.message);
+                        }
+                    } else {
+                        console.error('Error en la respuesta del servidor:', response.status, response.statusText);
+                    }
+                } catch (error) {
+                    console.error('Error al eliminar usuario:', error);
+                }
+            }
+        }
+        window.onload = loadUsers;
+    </script>
+</body>
+
+</html>

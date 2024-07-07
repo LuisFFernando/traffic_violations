@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar Agente</title>
+    <style>
+        /* Estilos opcionales */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+ 
+        label {
+            display: block;
+            margin-bottom: 8px;
+        }
+ 
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 16px;
+            box-sizing: border-box;
+        }
+ 
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Registrar Agente</h1>
+    <form id="officerForm">
+        <label for="plate">name:</label>
+        <input type="text" id="name" name="name" required><br>
+
+        <label for="last_name">last_name:</label>
+        <input type="text" id="last_name" name="last_name" required><br>
+
+        <label for="nif">nid:</label>
+        <input type="text" id="nid" name="nid" required><br>
+
+        <label for="phone">phone:</label>
+        <input type="text" id="phone" name="phone" required><br>
+
+        <label for="email">email:</label>
+        <input type="text" id="email" name="email" required><br>
+
+        <label for="password">password:</label>
+        <input type="password" id="password" name="password" required><br>
+
+        <button type="button" onclick="createTrafficOfficer()">Crear Oficial</button>
+
+    </form>
+    <script>
+        function createTrafficOfficer() {
+            const form = document.getElementById("officerForm");
+            const formData = new FormData(form);
+
+            const jsonData = {};
+            formData.forEach((value, key) => {
+                jsonData[key] = value;
+            });
+
+            fetch("/api/v1/officer", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(jsonData),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                form.reset();
+                alert("Oficial de Tráfico creado exitosamente");
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("Hubo un error al crear el oficial de tráfico");
+            });
+        }
+    </script>
+</body>
+</html>

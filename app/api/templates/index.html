@@ -1,0 +1,40 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Lista de Usuarios</title>
+   <style>
+       /* Estilos opcionales */
+       body {
+           font-family: Arial, sans-serif;
+           margin: 20px;
+       }
+
+       ul {
+           list-style-type: none;
+           padding: 0;
+       }
+
+       li {
+           margin-bottom: 10px;
+       }
+
+       a {
+           text-decoration: none;
+           color: #007BFF;
+       }
+   </style>
+</head>
+<body>
+   <h1>Admin</h1>
+   <ul>
+       <li><a href="/api/v1/create_user">Crear Usuario</a></li>
+       <li><a href="/api/v1/list_user">Listar Usuario</a></li>
+       <li><a href="/api/v1/create_officer">Crear Agente</a></li>
+       <li><a href="/api/v1/list_officer">Listar Agente</a></li>
+   </ul>
+</body>
+</html>

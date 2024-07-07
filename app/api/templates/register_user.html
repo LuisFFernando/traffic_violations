@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar Usuario</title>
+    <style>
+        /* Estilos opcionales */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+ 
+        label {
+            display: block;
+            margin-bottom: 8px;
+        }
+ 
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 16px;
+            box-sizing: border-box;
+        }
+ 
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Registrar Conductor</h1>
+    <form id="userForm">
+        <label for="plate">name:</label>
+        <input type="text" id="name" name="name" required><br>
+
+        <label for="last_name">last_name:</label>
+        <input type="text" id="last_name" name="last_name" required><br>
+
+        <label for="nif">nid:</label>
+        <input type="text" id="nid" name="nid" required><br>
+
+        <label for="phone">phone:</label>
+        <input type="text" id="phone" name="phone" required><br>
+
+        <label for="email">email:</label>
+        <input type="text" id="email" name="email" required><br>
+
+        <label for="address">address:</label>
+        <input type="text" id="address" name="address" required><br>
+
+        <button type="button" onclick="createUser()">Crear Conductor</button>
+
+    </form>
+    <script>
+        function createUser() {
+            const form = document.getElementById("userForm");
+            const formData = new FormData(form);
+
+            const jsonData = {};
+            formData.forEach((value, key) => {
+                jsonData[key] = value;
+            });
+
+            fetch("/api/v1/user", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(jsonData),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                form.reset();
+                alert("user creado exitosamente");
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("Hubo un error al crear el usuario");
+            });
+        }
+    </script>
+</body>
+</html>

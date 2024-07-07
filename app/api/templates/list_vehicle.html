@@ -1,0 +1,125 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Vehiculos</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .action-link {
+            cursor: pointer;
+            color: blue;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Lista de Vehiculos</h1>
+    <table id="vehicleTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>MARCA</th>
+                <th>MODELO</th>
+                <th>SERIAL</th>
+                <th>PLACA PATENTE</th>
+                <th>COLOR</th>
+                <th>Activo</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        async function loadVehicle() {
+            try {
+                const vehicleId = window.location.pathname.split('/').pop();
+
+                const response = await fetch(`/api/v1/vehicle/${vehicleId}`);
+                const result = await response.json();
+
+                if (response.ok) {
+                    if (result.success && result.data) {
+                        const vehicles = result.data;
+
+                        const vehicleTableBody = document.querySelector('#vehicleTable tbody');
+                        vehicleTableBody.innerHTML = '';
+
+                        vehicles.forEach(vehicle => {
+                            const row = vehicleTableBody.insertRow();
+                            row.innerHTML = `
+                               <td>${vehicle.id}</td>
+                               <td>${vehicle.brand}</td>
+                               <td>${vehicle.model}</td>
+                               <td>${vehicle.serial}</td>
+                               <td>${vehicle.color}</td>
+                               <td>${vehicle.placa_patente}</td>
+                               <td>${vehicle.active ? 'Sí' : 'No'}</td>
+                               <td>
+                               <a href="/api/v1/update_vehicle/${vehicle.id}/user/${vehicle.user_id}">Editar</a>
+                               |
+                               <span class="action-link" onclick="deleteVehicle(${vehicle.id},${vehicle.user_id})">Eliminar</span>
+                               </td> `;
+                        });
+                    } else {
+                        console.error('Error en la respuesta del servidor:', result.message);
+                    }
+                } else {
+                    console.error('Error en la respuesta del servidor:', response.status, response.statusText);
+                }
+            } catch (error) {
+                console.error('Error al cargar la lista de usuarios:', error);
+            }
+        }
+
+        async function deleteVehicle(userId, vehicleId) {
+            if (confirm('¿Estás seguro de que deseas eliminar este Vehiculo?')) {
+                try {
+                    const response = await fetch(`/api/v1/vehicle/${vehicleId}/user/${userId}`, {
+                        method: 'DELETE',
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok) {
+                        if (result.success) {
+                            console.log('Usuario eliminado con éxito:', result.message);
+                            loadOfficers(); // Recargar la lista de oficiales después de la eliminación
+                        } else {
+                            console.error('Error al eliminar usuario:', result.message);
+                        }
+                    } else {
+                        console.error('Error en la respuesta del servidor:', response.status, response.statusText);
+                    }
+                } catch (error) {
+                    console.error('Error al eliminar usuario:', error);
+                }
+            }
+        }
+
+        window.onload = loadVehicle;
+    </script>
+</body>
+
+</html>

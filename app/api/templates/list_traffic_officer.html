@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Usuarios</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .action-link {
+            cursor: pointer;
+            color: blue;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Lista de Usuarios</h1>
+    <table id="officerTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Email</th>
+                <th>Activo</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        async function loadOfficers() {
+            try {
+                const response = await fetch('/api/v1/officer');
+                const result = await response.json();
+
+                if (response.ok) {
+                    if (result.success && result.data) {
+                        const officers = result.data;
+
+                        const officerTableBody = document.querySelector('#officerTable tbody');
+                        officerTableBody.innerHTML = '';
+
+                        officers.forEach(officer => {
+                            const row = officerTableBody.insertRow();
+                            row.innerHTML = `
+                               <td>${officer.id}</td>
+                               <td>${officer.name}</td>
+                               <td>${officer.last_name}</td>
+                               <td>${officer.email}</td>
+                               <td>${officer.active ? 'True' : 'False'}</td>
+                               <td>
+                                   <a href="/api/v1/update_officer/${officer.id}">Editar</a>
+                                   | 
+                                   <span class="action-link" onclick="deleteOfficer(${officer.id})">Eliminar</span>
+                               </td>
+                           `;
+                        });
+                    } else {
+                        console.error('Error en la respuesta del servidor:', result.message);
+                    }
+                } else {
+                    console.error('Error en la respuesta del servidor:', response.status, response.statusText);
+                }
+            } catch (error) {
+                console.error('Error al cargar la lista de usuarios:', error);
+            }
+        }
+
+        async function deleteOfficer(officerId) {
+            if (confirm('¿Estás seguro de que deseas eliminar este usuario?')) {
+                try {
+                    const response = await fetch(`/api/v1/officer/${officerId}`, {
+                        method: 'DELETE',
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok) {
+                        if (result.success) {
+                            console.log('Usuario eliminado con éxito:', result.message);
+                            loadOfficers(); // Recargar la lista de oficiales después de la eliminación
+                        } else {
+                            console.error('Error al eliminar usuario:', result.message);
+                        }
+                    } else {
+                        console.error('Error en la respuesta del servidor:', response.status, response.statusText);
+                    }
+                } catch (error) {
+                    console.error('Error al eliminar usuario:', error);
+                }
+            }
+        }
+
+        window.onload = loadOfficers;
+    </script>
+</body>
+
+</html>
