@@ -37,22 +37,22 @@
 <body>
     <h1>Registrar Agente</h1>
     <form id="officerForm">
-        <label for="plate">name:</label>
+        <label for="name">Name:</label>
         <input type="text" id="name" name="name" required><br>
 
-        <label for="last_name">last_name:</label>
+        <label for="last_name">Last Name:</label>
         <input type="text" id="last_name" name="last_name" required><br>
 
-        <label for="nif">nid:</label>
+        <label for="nid">NID:</label>
         <input type="text" id="nid" name="nid" required><br>
 
-        <label for="phone">phone:</label>
+        <label for="phone">Phone:</label>
         <input type="text" id="phone" name="phone" required><br>
 
-        <label for="email">email:</label>
-        <input type="text" id="email" name="email" required><br>
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required><br>
 
-        <label for="password">password:</label>
+        <label for="password">Password:</label>
         <input type="password" id="password" name="password" required><br>
 
         <button type="button" onclick="createTrafficOfficer()">Crear Oficial</button>
@@ -61,30 +61,33 @@
     <script>
         function createTrafficOfficer() {
             const form = document.getElementById("officerForm");
-            const formData = new FormData(form);
+            if (form.checkValidity()) {
+                const formData = new FormData(form);
+                const jsonData = {};
+                formData.forEach((value, key) => {
+                    jsonData[key] = value;
+                });
 
-            const jsonData = {};
-            formData.forEach((value, key) => {
-                jsonData[key] = value;
-            });
-
-            fetch("/api/v1/officer", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(jsonData),
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log(data);
-                form.reset();
-                alert("Oficial de Tráfico creado exitosamente");
-            })
-            .catch(error => {
-                console.error("Error:", error);
-                alert("Hubo un error al crear el oficial de tráfico");
-            });
+                fetch("/api/v1/officer", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(jsonData),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    form.reset();
+                    alert("Oficial de Tráfico creado exitosamente");
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    alert("Hubo un error al crear el oficial de tráfico");
+                });
+            } else {
+                alert("Por favor, completa todos los campos obligatorios.");
+            }
         }
     </script>
 </body>

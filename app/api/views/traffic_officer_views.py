@@ -33,6 +33,7 @@ router = APIRouter()
 # Admin views
 ###############################################################
 
+
 @router.get("/create_officer")
 def read_root_view(request: Request):
     return templates.TemplateResponse("register_traffic_officer.html", {"request": request})
@@ -60,20 +61,17 @@ def login(request: LoginSerializer):
     response = authenticate_user(request.model_dump(exclude_none=True))
     return JSONResponse(
         status_code=response.get("status"),
-        content=dict(success=True, message=response.get(
-            "msg"), data=response.get("data")),
+        content=dict(success=True, message=response.get("msg"), data=response.get("data")),
     )
 
 
 @router.post("/officer", tags=["Traffic Officer"])
 def create_officer(request: CreateTrafficOfficerSerializer):
     """Create officer."""
-    response = TrafficOfficerHandler.create(
-        request.model_dump(exclude_none=True))
+    response = TrafficOfficerHandler.create(request.model_dump(exclude_none=True))
     return JSONResponse(
         status_code=response.get("status"),
-        content=dict(success=True, message=response.get(
-            "msg"), data=response.get("data")),
+        content=dict(success=True, message=response.get("msg"), data=response.get("data")),
     )
 
 
@@ -92,33 +90,29 @@ def get_officer(request: Request):
     response = TrafficOfficerHandler.get(serializers)
     return JSONResponse(
         status_code=response.get("status"),
-        content=dict(success=True, message=response.get(
-            "msg"), data=response.get("data")),
+        content=dict(success=True, message=response.get("msg"), data=response.get("data")),
     )
 
 
 @router.put("/officer/{officer_id}", tags=["Traffic Officer"])
 def update_officer(request: UpdatedTrafficOfficerSerializer, officer_id: int):
-    """Update officer """
+    """Update officer"""
 
     response = TrafficOfficerHandler.update(request.model_dump(exclude_none=True), officer_id)
     return JSONResponse(
         status_code=response.get("status"),
-        content=dict(success=True, message=response.get(
-            "msg"), data=response.get("data")),
+        content=dict(success=True, message=response.get("msg"), data=response.get("data")),
     )
 
 
 @router.delete("/officer/{officer_id}", tags=["Traffic Officer"])
 def delete_officer(officer_id: int):
-    """Delete officer by url params officer_id
-    """
+    """Delete officer by url params officer_id"""
 
     response = TrafficOfficerHandler.delete(officer_id)
     return JSONResponse(
         status_code=response.get("status"),
-        content=dict(success=True, message=response.get(
-            "msg"), data=response.get("data")),
+        content=dict(success=True, message=response.get("msg"), data=response.get("data")),
     )
 
 
@@ -132,12 +126,10 @@ def create_traffic_violations(request: CreateTrafficViolationsSerializer, token:
     """Create_traffic_violations."""
 
     payload_token = verify_jwt_token(token)
-    response = TrafficViolationsHandler.create(
-        request.model_dump(exclude_none=True), payload_token)
+    response = TrafficViolationsHandler.create(request.model_dump(exclude_none=True), payload_token)
     return JSONResponse(
         status_code=response.get("status"),
-        content=dict(success=True, message=response.get(
-            "msg"), data=response.get("data")),
+        content=dict(success=True, message=response.get("msg"), data=response.get("data")),
     )
 
 
@@ -145,13 +137,11 @@ def create_traffic_violations(request: CreateTrafficViolationsSerializer, token:
 def violations_report(request: Request):
     """violations report."""
     try:
-        serializers = ParamGetViolationsSerializer(
-            **request.query_params).model_dump(exclude_none=True)
+        serializers = ParamGetViolationsSerializer(**request.query_params).model_dump(exclude_none=True)
         response = TrafficViolationsHandler.report(serializers)
         return JSONResponse(
             status_code=response.get("status"),
-            content=dict(success=True, message=response.get(
-                "msg"), data=response.get("data")),
+            content=dict(success=True, message=response.get("msg"), data=response.get("data")),
         )
     except Exception as error:
         return JSONResponse(dict(error=True, message=str(error)), status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)

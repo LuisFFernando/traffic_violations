@@ -52,49 +52,50 @@
         <label for="serial">Serial:</label>
         <input type="text" id="serial" name="serial" required><br>
 
-        <label for="description">description:</label>
+        <label for="description">Descripción:</label>
         <input type="text" id="description" name="description" required><br>
 
         <label for="placa_patente">Placa:</label>
         <input type="text" id="placa_patente" name="placa_patente" required><br>
 
-        <label for="color">color:</label>
+        <label for="color">Color:</label>
         <input type="text" id="color" name="color" required><br>
 
         <button type="button" onclick="createVehicle()">Crear Vehiculo</button>
-
     </form>
     <script>
         function createVehicle() {
-
             const userId = window.location.pathname.split('/').pop();
             document.getElementById('userId').textContent = userId;
 
             const form = document.getElementById("vehicleForm");
-            const formData = new FormData(form);
+            if (form.checkValidity()) {
+                const formData = new FormData(form);
+                const jsonData = {};
+                formData.forEach((value, key) => {
+                    jsonData[key] = value;
+                });
 
-            const jsonData = {};
-            formData.forEach((value, key) => {
-                jsonData[key] = value;
-            });
-
-            fetch(`/api/v1/vehicle/${userId}`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(jsonData),
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log(data);
-                form.reset();
-                alert("Vehiculo creado exitosamente");
-            })
-            .catch(error => {
-                console.error("Error:", error);
-                alert("Hubo un error al crear el Vehiculo");
-            });
+                fetch(`/api/v1/vehicle/${userId}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(jsonData),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    form.reset();
+                    alert("Vehiculo creado exitosamente");
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    alert("Hubo un error al crear el Vehiculo");
+                });
+            } else {
+                alert("Por favor, completa todos los campos obligatorios.");
+            }
         }
     </script>
 </body>

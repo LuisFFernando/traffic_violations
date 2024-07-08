@@ -1,0 +1,36 @@
+version: '3.10'
+name : traffic_app
+
+services:
+
+  app:
+    build:
+      context: ../
+      dockerfile: docker/app/Dockerfile
+    ports:
+      - "8001:8001"
+    depends_on:
+      - db
+    environment:
+      - POSTGRES_URI=postgresql://postgres:postgres@db:5432/traffic_violations
+      - ALGORITHM="HS256"
+    restart: always
+
+
+  db:
+    image: postgres
+    environment:
+      POSTGRES_DB: traffic_violations
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+
+  nginx:
+    build:
+      context: ../
+      dockerfile: docker/nginx/Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - app

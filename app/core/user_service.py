@@ -4,7 +4,6 @@ from app.core.models.model import User
 from app.api.serializers.user_serializer import UserDeserializer
 
 from datetime import datetime
-import inject
 
 
 class UserService:
@@ -38,7 +37,7 @@ class UserService:
 
     def update(self, user_id, kwarg: dict):
         try:
-            kwarg["updated_at"] = datetime.utcnow()
+            kwarg.update({"updated_at": datetime.now()})
             query = {"id": user_id}
             _instance = QueryManager(User).update(query, kwarg)
 
@@ -52,7 +51,7 @@ class UserService:
 
     def delete(self, user_id: dict):
         try:
-            data = {"active": False, "updated_at": datetime.utcnow()}
+            data = {"active": False, "updated_at": datetime.now()}
             query = {"id": user_id}
             _instance = QueryManager(User).delete(query, data)
 

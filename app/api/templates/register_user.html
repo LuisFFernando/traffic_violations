@@ -37,54 +37,56 @@
 <body>
     <h1>Registrar Conductor</h1>
     <form id="userForm">
-        <label for="plate">name:</label>
+        <label for="name">Name:</label>
         <input type="text" id="name" name="name" required><br>
 
-        <label for="last_name">last_name:</label>
+        <label for="last_name">Last Name:</label>
         <input type="text" id="last_name" name="last_name" required><br>
 
-        <label for="nif">nid:</label>
+        <label for="nid">Identificacion:</label>
         <input type="text" id="nid" name="nid" required><br>
 
-        <label for="phone">phone:</label>
+        <label for="phone">Phone:</label>
         <input type="text" id="phone" name="phone" required><br>
 
-        <label for="email">email:</label>
-        <input type="text" id="email" name="email" required><br>
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required><br>
 
-        <label for="address">address:</label>
+        <label for="address">Address:</label>
         <input type="text" id="address" name="address" required><br>
 
         <button type="button" onclick="createUser()">Crear Conductor</button>
-
     </form>
     <script>
         function createUser() {
             const form = document.getElementById("userForm");
-            const formData = new FormData(form);
+            if (form.checkValidity()) {
+                const formData = new FormData(form);
+                const jsonData = {};
+                formData.forEach((value, key) => {
+                    jsonData[key] = value;
+                });
 
-            const jsonData = {};
-            formData.forEach((value, key) => {
-                jsonData[key] = value;
-            });
-
-            fetch("/api/v1/user", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(jsonData),
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log(data);
-                form.reset();
-                alert("user creado exitosamente");
-            })
-            .catch(error => {
-                console.error("Error:", error);
-                alert("Hubo un error al crear el usuario");
-            });
+                fetch("/api/v1/user", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(jsonData),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    form.reset();
+                    alert("Usuario creado exitosamente");
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    alert("Hubo un error al crear el usuario");
+                });
+            } else {
+                alert("Por favor, completa todos los campos obligatorios.");
+            }
         }
     </script>
 </body>

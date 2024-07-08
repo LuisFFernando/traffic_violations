@@ -64,8 +64,9 @@ class QueryManager(InterfaceCrud):
             session.commit()
             return _instance
         except Exception as error:
+            message = error.args
             session.rollback()
-            raise Exception(error)
+            raise Exception(message)
 
     def custom_query(self, email, first_params, seconds_params):
         """."""

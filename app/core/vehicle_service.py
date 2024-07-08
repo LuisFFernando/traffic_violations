@@ -12,7 +12,7 @@ class VehicleService:
         """Create User."""
 
         try:
-            kwargs["user_id"] = user_id
+            kwargs.update({"user_id": user_id})
             _vehicle = QueryManager(Vehicle).create(kwargs)
             result = VehicleDeserializer.model_validate(_vehicle).model_dump(exclude_none=True)
 
@@ -23,7 +23,7 @@ class VehicleService:
     def get(self, kwargs: dict, user_id: int):
         """Get User"""
         try:
-            kwargs["user_id"] = user_id
+            kwargs.update({"user_id": user_id})
             _instance = QueryManager(Vehicle).filter(kwargs)
 
             if list(_instance):
@@ -38,7 +38,7 @@ class VehicleService:
 
     def update(self, vehicle_id, user_id, kwarg: dict):
         try:
-            kwarg["updated_at"] = datetime.utcnow()
+            kwarg.update({"updated_at": datetime.now()})
             query = {"id": vehicle_id, "user_id": user_id}
             _instance = QueryManager(Vehicle).update(query, kwarg)
 

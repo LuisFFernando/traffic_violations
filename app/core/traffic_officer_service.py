@@ -19,10 +19,11 @@ class TrafficOfficerService:
         """Create User."""
 
         try:
-            kwargs["password"] = hashed_password(kwargs.get("password"))
+            kwarg = self.hash_password(kwarg)
 
             _officer = QueryManager(TrafficOfficer).create(kwargs)
             result = TrafficOfficerDeserializer.model_validate(_officer).model_dump(exclude_none=True)
+
             return {"status": 201, "data": result, "msg": "OK"}
         except Exception as error:
             return {"status": 500, "data": f"Error in create traffic officer {error}", "msg": "ERROR"}
@@ -46,9 +47,12 @@ class TrafficOfficerService:
 
     def update(self, vehicle_id, kwarg: dict):
         try:
-            kwarg["updated_at"] = datetime.utcnow()
+            kwarg.update({"updated_at": datetime.now()})
+            
+            kwarg = self.hash_password(kwarg)
+            
             query = {"id": vehicle_id}
-            _instance = QueryManager(TrafficOfficer).delete(query, kwarg)
+            _instance = QueryManager(TrafficOfficer).update(query, kwarg)
 
             if _instance == 1:
                 return {"status": 200, "data": "Traffic Officer update successfully", "msg": "OK"}
@@ -57,6 +61,13 @@ class TrafficOfficerService:
 
         except Exception as error:
             return {"status": 500, "data": "Error in update traffic officer", "msg": "ERROR"}
+        
+    def hash_password(self, kwargs:dict):
+        
+        if kwargs.get("password"):
+            kwargs.update({"password": hashed_password(kwargs.get("password"))})
+            
+        return kwargs
 
     def delete(self, nid: dict):
         try:
@@ -82,9 +93,11 @@ class ViolationsService:
             kwargs["traffic_officer_id"] = officer_id
             _traffic_violations = QueryManager(Violations).create(kwargs)
             result = ViolationsDeserializer.model_validate(_traffic_violations).model_dump(exclude_none=True)
+
             return {"status": 200, "data": result, "msg": "OK"}
+
         except Exception as error:
-            return {"status": 500, "data": str(error), "msg": "ERROR"}
+            return {"status": 404, "data": str(error), "msg": "ERROR"}
 
     def exist_vehicle(self, placa_patente):
         try:
@@ -96,10 +109,12 @@ class ViolationsService:
     def violations_reports(self, email: str):
         try:
             _traffic_violations = QueryManager(Violations).custom_query(email, Vehicle, User)
+
             result = [
                 VehicleViolationsDeserializer.model_validate(data).model_dump(exclude_none=True)
                 for data in _traffic_violations
             ]
+
             return {"status": 200, "data": result, "msg": "OK"}
         except Exception as error:
             return {"status": 500, "data": str(error), "msg": "ERROR"}

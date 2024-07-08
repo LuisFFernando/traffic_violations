@@ -35,6 +35,7 @@ def create_user(request: Request):
 def list_user(request: Request):
     return templates.TemplateResponse("list_user.html", {"request": request})
 
+
 @router.get("/update_user/{user_id}")
 def update_user(request: Request):
     return templates.TemplateResponse("update_user.html", {"request": request})

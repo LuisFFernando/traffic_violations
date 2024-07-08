@@ -49,9 +49,6 @@ def create_jwt_token(data: dict) -> str:
     return token
 
 
-# Función para verificar y decodificar un token JWT
-
-
 def verify_jwt_token(token: str = Depends(oauth2_scheme)) -> dict:
     credentials_exception = HTTPException(
         status_code=401,
