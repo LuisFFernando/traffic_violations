@@ -18,11 +18,14 @@ COPY migrations ./migrations
 COPY alembic.ini ./
 
 COPY docker ./docker
-COPY ./docker/app/entrypoint.sh ./
-RUN chmod +x ./entrypoint.sh
-
+# COPY ./docker/app/entrypoint.sh ./
 RUN poetry install --no-root
-ENTRYPOINT ["./entrypoint.sh"]
+RUN JWT_SECRET=$(openssl rand -base64 32) && echo "JWT_SECRET=$JWT_SECRET" >> /etc/environment
+
+ENV JWT_SECRET=$JWT_SECRET
+# RUN chmod +x ./entrypoint.sh
+
+# ENTRYPOINT ["./entrypoint.sh"]
 
 CMD ["bash", "-c", "poetry run alembic upgrade head && poetry run uvicorn config.main:app --host 0.0.0.0 --port 8001"]
 
