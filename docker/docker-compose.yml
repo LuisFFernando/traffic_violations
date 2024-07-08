@@ -13,7 +13,7 @@ services:
       - db
     environment:
       - POSTGRES_URI=postgresql://postgres:postgres@db:5432/traffic_violations
-      - ALGORITHM="HS256"
+      - ALGORITHM=HS256
       - JWT_SECRET=${JWT_SECRET}
     restart: always
 
