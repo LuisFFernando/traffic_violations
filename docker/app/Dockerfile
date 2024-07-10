@@ -23,9 +23,6 @@ RUN poetry install --no-root
 RUN JWT_SECRET=$(openssl rand -base64 32) && echo "JWT_SECRET=$JWT_SECRET" >> /etc/environment
 
 ENV JWT_SECRET=$JWT_SECRET
-# RUN chmod +x ./entrypoint.sh
-
-# ENTRYPOINT ["./entrypoint.sh"]
 
 CMD ["bash", "-c", "poetry run alembic upgrade head && poetry run uvicorn config.main:app --host 0.0.0.0 --port 8001"]
 
