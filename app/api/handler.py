@@ -7,62 +7,62 @@ from app.core.vehicle_service import VehicleService
 class UserHandler:
     @classmethod
     def create(cls, kwargs: dict):
-        return UserService().create(kwargs)
+        return UserService(kwargs).create()
 
     @classmethod
     def get(cls, kwargs: dict):
-        return UserService().get(kwargs)
+        return UserService(kwargs).get()
 
     @classmethod
     def update(cls, kwargs: dict, user_id: int):
-        return UserService().update(user_id, kwargs)
+        return UserService(kwargs, user_id).update()
 
     @classmethod
     def delete(cls, user_id: int):
-        return UserService().delete(user_id)
+        return UserService(user_id=user_id).delete()
 
 
 class TrafficOfficerHandler:
     @classmethod
     def create(cls, kwargs: dict):
-        return TrafficOfficerService().create(kwargs)
+        return TrafficOfficerService(kwargs).create()
 
     @classmethod
     def get(cls, kwargs: dict):
-        return TrafficOfficerService().get(kwargs)
+        return TrafficOfficerService(kwargs).get()
 
     @classmethod
     def update(cls, kwargs: dict, officer_id: int):
-        return TrafficOfficerService().update(officer_id, kwargs)
+        return TrafficOfficerService(kwargs, officer_id).update()
 
     @classmethod
     def delete(cls, nid: int):
-        return TrafficOfficerService().delete(nid)
+        return TrafficOfficerService(officer_id=nid).delete()
 
 
 class TrafficViolationsHandler:
     @classmethod
     def create(cls, kwargs: dict, payload_token):
-        return ViolationsService().create(kwargs, payload_token.get("officer_id"))
+        return ViolationsService(kwargs, payload_token.get("officer_id")).create()
 
     @classmethod
     def report(cls, params: dict):
-        return ViolationsService().violations_reports(params.get("email"))
+        return ViolationsService(params=params.get("email")).violations_reports()
 
 
 class VehicleHandler:
     @classmethod
     def create(cls, kwargs: dict, user_id):
-        return VehicleService().create(kwargs, user_id)
+        return VehicleService(kwargs, user_id).create()
 
     @classmethod
     def get(cls, kwargs: dict, user_id: int):
-        return VehicleService().get(kwargs, user_id)
+        return VehicleService(kwargs=kwargs, user_id=user_id).get()
 
     @classmethod
     def update(cls, kwargs: dict, vehicle_id: int, user_id: int):
-        return VehicleService().update(vehicle_id, user_id, kwargs)
+        return VehicleService(kwargs, user_id, vehicle_id).update()
 
     @classmethod
     def delete(cls, vehicle_id: int, user_id: int):
-        return VehicleService().delete(vehicle_id, user_id)
+        return VehicleService(user_id=user_id, vehicle_id=vehicle_id).delete()

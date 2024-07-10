@@ -42,9 +42,9 @@
                 <th>MARCA</th>
                 <th>MODELO</th>
                 <th>SERIAL</th>
-                <th>PLACA PATENTE</th>
                 <th>COLOR</th>
-                <th>Activo</th>
+                <th>PLACA PATENTE</th>
+                <th>ACTIVO</th>
                 <th>Acciones</th>
             </tr>
         </thead>
@@ -93,7 +93,7 @@
             }
         }
 
-        async function deleteVehicle(userId, vehicleId) {
+        async function deleteVehicle(vehicleId, userId) {
             if (confirm('¿Estás seguro de que deseas eliminar este Vehiculo?')) {
                 try {
                     const response = await fetch(`/api/v1/vehicle/${vehicleId}/user/${userId}`, {

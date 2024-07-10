@@ -1,12 +1,15 @@
 from sqlalchemy.exc import NoResultFound, IntegrityError
 from app.repository.crud_interface import InterfaceCrud
 from config.postgres_conection import session
+from typing import Optional, TypeVar
+
+T = TypeVar("T", bound=object)
 
 
 class QueryManager(InterfaceCrud):
     """ """
 
-    def __init__(self, entity):
+    def __init__(self, entity: Optional[T] = None) -> None:
         self.entity = entity
 
     def get(self, kwargs):

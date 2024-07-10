@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import sentry_sdk
 from sentry_sdk.integrations.asgi import SentryAsgiMiddleware
 from config import routes
+from app.core.commons.inject_clients import instantiate_and_inject_clients
 
 
 API_VERSION = "v0.1.0"
@@ -32,6 +33,8 @@ app.add_middleware(
 )
 
 app.include_router(routes.urls)
+
+instantiate_and_inject_clients()
 
 
 SentryAsgiMiddleware(app)

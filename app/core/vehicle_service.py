@@ -3,31 +3,46 @@ from app.repository.postgres_repository import QueryManager
 from app.core.models.model import Vehicle
 from app.api.serializers.vehicle_serializer import VehicleDeserializer
 from datetime import datetime
+import inject
 
 
 class VehicleService:
     """."""
 
-    def create(self, kwargs: dict, user_id):
+    def __init__(self, kwargs: dict = None, user_id: int = 0, vehicle_id: int = 0) -> None:
+        self.kwargs = kwargs
+        self.user_id = user_id
+        self.vehicle_id = vehicle_id
+
+    @inject.params(query_manager=QueryManager)
+    def create(self, query_manager: QueryManager):
         """Create User."""
 
         try:
-            kwargs.update({"user_id": user_id})
-            _vehicle = QueryManager(Vehicle).create(kwargs)
-            result = VehicleDeserializer.model_validate(_vehicle).model_dump(exclude_none=True)
+            self.kwargs.update({"user_id": self.user_id})
+
+            query_manager.entity = Vehicle
+            vehicle_instance = query_manager.create(self.kwargs)
+
+            result = VehicleDeserializer.model_validate(vehicle_instance).model_dump(exclude_none=True)
 
             return {"status": 201, "data": result, "msg": "OK"}
         except Exception as error:
             return {"status": 500, "data": f"Vehicle already exist {error}", "msg": "ERROR"}
 
-    def get(self, kwargs: dict, user_id: int):
+    @inject.params(query_manager=QueryManager)
+    def get(self, query_manager: QueryManager):
         """Get User"""
         try:
-            kwargs.update({"user_id": user_id})
-            _instance = QueryManager(Vehicle).filter(kwargs)
+            self.kwargs.update({"user_id": self.user_id})
 
-            if list(_instance):
-                rest = [VehicleDeserializer.model_validate(data).model_dump(exclude_none=True) for data in _instance]
+            query_manager.entity = Vehicle
+            vehicle_instance = query_manager.filter(self.kwargs)
+
+            if list(vehicle_instance):
+                rest = [
+                    VehicleDeserializer.model_validate(data).model_dump(exclude_none=True) for data in vehicle_instance
+                ]
 
                 return {"status": 200, "data": rest, "msg": "OK"}
 
@@ -36,13 +51,17 @@ class VehicleService:
         except Exception as error:
             return {"status": 500, "data": str(error), "msg": "ERROR"}
 
-    def update(self, vehicle_id, user_id, kwarg: dict):
+    @inject.params(query_manager=QueryManager)
+    def update(self, query_manager: QueryManager):
         try:
-            kwarg.update({"updated_at": datetime.now()})
-            query = {"id": vehicle_id, "user_id": user_id}
-            _instance = QueryManager(Vehicle).update(query, kwarg)
+            self.kwargs.update({"updated_at": datetime.now()})
 
-            if _instance == 1:
+            query = {"id": self.vehicle_id, "user_id": self.user_id}
+
+            query_manager.entity = Vehicle
+            vehicle_instance = query_manager.update(query, self.kwargs)
+
+            if vehicle_instance == 1:
                 return {"status": 200, "data": "Vehicle update successfully", "msg": "OK"}
 
             return {"status": 404, "data": "Error in update Vehicle not found", "msg": "ERROR"}
@@ -50,13 +69,16 @@ class VehicleService:
         except Exception as error:
             return {"status": 500, "data": f"Error in update Vehicle {error}", "msg": "ERROR"}
 
-    def delete(self, vehicle_id: int, user_id: int):
+    @inject.params(query_manager=QueryManager)
+    def delete(self, query_manager: QueryManager):
         try:
-            data = {"active": False, "updated_at": datetime.utcnow()}
-            query = {"id": vehicle_id, "user_id": user_id}
-            _instance = QueryManager(Vehicle).delete(query, data)
+            data = {"active": False, "updated_at": datetime.now()}
+            query = {"id": self.vehicle_id, "user_id": self.user_id}
 
-            if _instance == 1:
+            query_manager.entity = Vehicle
+            vehicle_instance = query_manager.delete(query, data)
+
+            if vehicle_instance == 1:
                 return {"status": 200, "data": "Vehicle deleted successfully", "msg": "OK"}
 
             return {"status": 404, "data": "Error in deleting Vehicle not found", "msg": "ERROR"}

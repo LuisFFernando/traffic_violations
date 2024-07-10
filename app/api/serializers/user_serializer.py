@@ -1,7 +1,7 @@
 import datetime
 from email.policy import default
 from pydantic import BaseModel, Field
-from pydantic import validator
+from pydantic import field_validator
 from typing import Optional, List
 from pydantic import BaseModel, ConfigDict, StringConstraints
 
@@ -56,10 +56,10 @@ class UserDeserializer(BaseModel):
     created_at: Optional[datetime.datetime] = ""
     updated_at: Optional[datetime.datetime] = ""
 
-    @validator("created_at")
+    @field_validator("created_at")
     def cast_created_at(cls, created_at):
         return str(created_at)
 
-    @validator("updated_at")
+    @field_validator("updated_at")
     def cast_updated_at(cls, updated_at):
         return str(updated_at)
